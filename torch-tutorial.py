@@ -65,12 +65,13 @@ print(w.grad)
 x = np.array([1, 2, 3, 4], dtype=np.float32)
 y = np.array([1, 2, 3, 4], dtype=np.float32)
 
+# w = torch.tensor(0.0, requires_grad=True)
 w = 0.0
 
-def forward(x): 
+def forward(x): #y = 2x, approximate w st loss is minimized
     return w * x #one layer
 
-def loss(y, y_predict):
+def loss(y, y_predict): #mean squared error loss
     return ((y_predict - y)**2).mean()
 
 #gradient
@@ -82,7 +83,7 @@ print(f'prediction before trainig: f(5)= {forward(5):.3f}')
 #training of the net
 
 learning_rate = 0.01
-iter = 10
+iter = 50
 
 for epoch in range(iter):
     
@@ -90,24 +91,55 @@ for epoch in range(iter):
     
     l = loss(y, y_pred) #epoch loss after the current pass
     
-    dw = gradient(x,y,y_pred) #backward gradient computation
+    dw = gradient(x,y,y_pred) #backward gradient computation, assign the gradient to a variable
     
     w -= learning_rate * dw #weights update
     
-    if epoch % 1 == 0:
+    if epoch % 5 == 0:
         print(f'{epoch}: w ={w}, loss ={l:.8f}')
 
 print(f'Predictin after training: f(5)= {forward(5):.3f}')
 
 
+#now do everything with pytorch
 
+x = torch.tensor([1,2,3,4], dtype=torch.float32)
+y = torch.tensor([1,2,3,4], dtype=torch.float32)
 
+w = torch.tensor(0.0, dtype=torch.float32, requires_grad=True) #requires gradient if you use only torch
 
+learning_rate = 0.01
+iter = 50
 
+def forward2(x):
+    return w * x
 
+def loss2(y, y_predicted):
+    return ((y_predicted - y)**2).mean()
 
+print(f'Only Pytorch: prediction before training: f(5)={forward2(5)}')
 
+for epoch in range(iter):
 
+    y_pred = forward2(x)
+    
+    tmp_loss = loss2(y, y_pred)
+    
+    tmp_loss.backward() #backprop and gradient are done automatically like this
+
+    #update the weights
+    with torch.no_grad(): #it sshould not be part of the computational graph 
+        w -= learning_rate * w.grad
+    
+    #zero gradients- clear them, they must not be accumulated
+    w.grad.zero_()
+
+    if epoch % (iter/10) == 0:
+        print(f'{epoch}: w ={w}, loss ={tmp_loss:.8f}')
+        
+print(f'Only Pytorch: prediction after training: f(5)={forward2(5)}')
+
+#with pytorch it is not as exact as with numpy
 
 
 
