@@ -41,8 +41,8 @@ for epoch in range(nepochs):
 
 
 pred = model(x).detach().numpy() #generates a new tensor without grandient required thing
-plt.plot(xnp, ynp, 'ro')
-plt.plot(xnp, pred, 'b')
+plt.plot(xnp, ynp, 'ro') #plot dataset
+plt.plot(xnp, pred, 'b') #plot current trained model
 plt.show()
 
 
