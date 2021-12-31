@@ -19,7 +19,7 @@ sc = StandardScaler()
 xtrain = sc.fit_transform(xtrain)
 xtest = sc.transform(xtest)
 
-# transform into pytorch tensors
+# convert into pytorch tensors
 xtrain = torch.from_numpy(xtrain.astype(np.float32))
 xtest = torch.from_numpy(xtest.astype(np.float32))
 ytrain = torch.from_numpy(ytrain.astype(np.float32))
